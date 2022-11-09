@@ -19,14 +19,14 @@ async function run() {
         const serviceCollection = client.db('redArt').collection('services');
         const reviewCollection = client.db('redArt').collection('reviews');
 
-        // app.get('/services', async (req, res) => {
-        //     const size = parseInt(req.query.size);
-        //     console.log(size);
-        //     const query = {}
-        //     const cursor = serviceCollection.find(query);
-        //     const services = await cursor.limit(size).toArray();
-        //     res.send(services);
-        // });
+        app.get('/services', async (req, res) => {
+            const size = parseInt(req.query.size);
+            console.log(size);
+            const query = {}
+            const cursor = serviceCollection.find(query);
+            const services = await cursor.limit(size).toArray();
+            res.send(services);
+        });
 
         // app.post('/services', async (req, res) => {
         //     const service = req.body;
