@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion,ObjectId } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 
 const app = express();
@@ -24,10 +24,11 @@ async function run() {
             console.log(size);
             const query = {}
             const cursor = serviceCollection.find(query);
-            const services = await cursor.limit(size).toArray();
+            const services = await cursor.sort({ $natural: -1 }).limit(size).toArray();
             res.send(services);
         });
 
+        // service post 
         app.post('/services', async (req, res) => {
             const service = req.body;
             console.log(service);
@@ -37,13 +38,37 @@ async function run() {
 
         app.get('/services/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: ObjectId(id) };
+            const query = { _id: ObjectId(id) };
             const service = await serviceCollection.findOne(query);
             res.send(service);
         });
+   
+        app.get('/reviews', async (req, res) => {
+            let query = {};
+            if (req.query.serviceId) {
+                query = {
+                    serviceId: req.query.serviceId
+                }
+            }
+            const cursor = reviewCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        })
 
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        });
 
-        // reviews api
+        // myReviews 
+        app.get('/myReviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const review = await reviewCollection.findOne(query);
+            res.send(review);
+        });
+
         app.get('/myReviews', async (req, res) => {
             let query = {};
 
@@ -56,26 +81,15 @@ async function run() {
             const reviews = await cursor.toArray();
             res.send(reviews);
         });
-        app.get('/reviews', async (req, res) => {
-            const query = {};
-            const cursor = reviewCollection.find(query);
-            const reviews = await cursor.toArray();
-            res.send(reviews);
-        });
 
-        app.post('/reviews', async (req, res) => {
-            const review = req.body;
-            const result = await reviewCollection.insertOne(review);
-            res.send(result);
-        });
-
-        app.patch('/reviews/:id', async (req, res) => {
+        app.patch('/myReviews/:id', async (req, res) => {
             const id = req.params.id;
-            const status = req.body.status
+            console.log(req.body);
+            const review = req.body;
             const query = { _id: ObjectId(id) }
             const updatedDoc = {
                 $set: {
-                    status: status
+                    comment: review.comment
                 }
             }
             const result = await reviewCollection.updateOne(query, updatedDoc);
