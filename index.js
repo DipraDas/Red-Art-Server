@@ -97,7 +97,7 @@ async function run() {
             const result = await reviewCollection.updateOne(query, updatedDoc);
             res.send(result);
         })
-
+// my reviews delete 
         app.delete('/reviews/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
