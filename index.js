@@ -69,6 +69,7 @@ async function run() {
             res.send(review);
         });
 
+        // get my reviews 
         app.get('/myReviews', async (req, res) => {
             let query = {};
 
