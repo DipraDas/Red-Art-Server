@@ -83,6 +83,7 @@ async function run() {
             res.send(reviews);
         });
 
+        // my reviews update 
         app.patch('/myReviews/:id', async (req, res) => {
             const id = req.params.id;
             console.log(req.body);
